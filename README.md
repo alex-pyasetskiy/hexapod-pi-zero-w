@@ -100,16 +100,15 @@ PC program source files are located under `./software/pc/`. The compiled program
 | body_top       | <img src="./imgs/body_top.jpg" alt="body_top" width="300"/>             | 1        |
 | body_bottom    | <img src="./imgs/body_bottom.jpg" alt="body_bottom" width="300"/>       | 1        |
 | body_side_wall | <img src="./imgs/body_side_wall.jpg" alt="body_side_wall" width="300"/> | 2        |
-| body_back_wall | <img src="./imgs/body_back_wall.jpg" alt="body_back_wall" width="300"/> | 1        |
+| body_back_wall | <img src="./imgs/body_back_wall.jpg" alt="body_back_wall" width="300"/> | 2        |
 | battery_box    | <img src="./imgs/battery_box.jpg" alt="battery_box" width="300"/>       | 1        |
-| battery_holder | <img src="./imgs/battery_holder.jpg" alt="battery_holder" width="300"/> | 2        |
+| battery_cover  | <img src="./imgs/battery_cover.jpg" alt="battery_cover" width="300"/>   | 1        |
 
 ##### Leg x 6
 
 | Filename        | Thumbnail                                                                 | Required |
 | --------------- | ------------------------------------------------------------------------- | -------- |
 | thigh_top       | <img src="./imgs/thigh_top.jpg" alt="thigh_top" width="300"/>             | 1 (x6)   |
-| thigh_bottom    | <img src="./imgs/thigh_bottom.jpg" alt="thigh_bottom" width="300"/>       | 1 (x6)   |
 | joint_cross     | <img src="./imgs/joint_cross.jpg" alt="joint_cross" width="300"/>         | 1 (x6)   |
 | joint_top       | <img src="./imgs/joint_top.jpg" alt="joint_top" width="300"/>             | 2 (x6)   |
 | joint_bottom    | <img src="./imgs/joint_bottom.jpg" alt="joint_bottom" width="300"/>       | 2 (x6)   |
@@ -119,8 +118,6 @@ PC program source files are located under `./software/pc/`. The compiled program
 | foot_bottom     | <img src="./imgs/foot_bottom.jpg" alt="foot_bottom" width="300"/>         | 1 (x6)   |
 | foot_ground     | <img src="./imgs/foot_ground.jpg" alt="foot_ground" width="300"/>         | 1 (x6)   |
 | foot_tip        | <img src="./imgs/foot_tip.jpg" alt="foot_tip" width="300"/>               | 1 (x6)   |
-| servo_horn_j1j2 | <img src="./imgs/servo_horn_j1j2.jpg" alt="servo_horn_j1j2" width="300"/> | 2 (x6)   |
-| servo_horn_j3   | <img src="./imgs/servo_horn_j3.jpg" alt="servo_horn_j3" width="300"/>     | 1 (x6)   |
 
 #### Others
 

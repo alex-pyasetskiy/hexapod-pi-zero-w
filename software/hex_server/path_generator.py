@@ -1,29 +1,3 @@
-#!python
-#
-# 2021  Zhengyu Peng
-# Website: https://zpeng.me
-#
-# `                      `
-# -:.                  -#:
-# -//:.              -###:
-# -////:.          -#####:
-# -/:.://:.      -###++##:
-# ..   `://:-  -###+. :##:
-#        `:/+####+.   :##:
-# .::::::::/+###.     :##:
-# .////-----+##:    `:###:
-#  `-//:.   :##:  `:###/.
-#    `-//:. :##:`:###/.
-#      `-//:+######/.
-#        `-/+####/.
-#          `+##+.
-#           :##:
-#           :##:
-#           :##:
-#           :##:
-#           :##:
-#            .+:
-
 from lib import semicircle_generator, semicircle2_generator
 from lib import path_rotate_z
 from lib import get_rotate_x_matrix, get_rotate_y_matrix, get_rotate_z_matrix

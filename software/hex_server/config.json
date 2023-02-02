@@ -8,12 +8,12 @@
         "front_left"
     ],
     "legMountX": [
-        29.41,
-        36.87,
-        29.41,
-        -29.41,
-        -36.87,
-        -29.41
+        70,
+        30,
+        70,
+        -30,
+        -70,
+        -30
     ],
     "legMountY": [
         55.41,
@@ -31,10 +31,10 @@
         -180,
         -225
     ],
-    "legRootToJoint1": 20.75,
-    "legJoint1ToJoint2": 28.0,
-    "legJoint2ToJoint3": 42.6,
-    "legJoint3ToTip": 89.07,
+    "legRootToJoint1": 30,
+    "legJoint1ToJoint2": 30,
+    "legJoint2ToJoint3": 85,
+    "legJoint3ToTip": 90,
     "movementInterval": 5,
     "movementSwitchDuration": 150,
     "leg0Offset": [

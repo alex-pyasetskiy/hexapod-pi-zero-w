@@ -1,31 +1,3 @@
-#!python
-#
-# 2021 - PRESENT  Zhengyu Peng
-# Website: https://zpeng.me
-#
-# `                      `
-# -:.                  -#:
-# -//:.              -###:
-# -////:.          -#####:
-# -/:.://:.      -###++##:
-# ..   `://:-  -###+. :##:
-#        `:/+####+.   :##:
-# .::::::::/+###.     :##:
-# .////-----+##:    `:###:
-#  `-//:.   :##:  `:###/.
-#    `-//:. :##:`:###/.
-#      `-//:+######/.
-#        `-/+####/.
-#          `+##+.
-#           :##:
-#           :##:
-#           :##:
-#           :##:
-#           :##:
-#            .+:
-
-# Libraries
-# https://circuitpython.readthedocs.io/projects/servokit/en/latest/
 from audioop import reverse
 from adafruit_servokit import ServoKit
 
@@ -49,6 +21,7 @@ from threading import Thread
 
 from tcpserver import TCPServer
 from btserver import BluetoothServer
+from hex_server import ROOT_DIR
 
 
 class Hexapod(Thread):
@@ -92,7 +65,7 @@ class Hexapod(Thread):
 
         self.calibration_mode = False
 
-        with open('/home/pi/hexapod/software/raspberry pi/config.json', 'r') as read_file:
+        with open(f'{ROOT_DIR}/config.json', 'r') as read_file:
             self.config = json.load(read_file)
 
         # legs' coordinates

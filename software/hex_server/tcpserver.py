@@ -1,40 +1,9 @@
-#!python
-#
-# Bluetooth server thread
-# Monitor the Bluetooth connection and receive commands
-#
-# 2021 - PRESENT  Zhengyu Peng
-# Website: https://zpeng.me
-#
-# `                      `
-# -:.                  -#:
-# -//:.              -###:
-# -////:.          -#####:
-# -/:.://:.      -###++##:
-# ..   `://:-  -###+. :##:
-#        `:/+####+.   :##:
-# .::::::::/+###.     :##:
-# .////-----+##:    `:###:
-#  `-//:.   :##:  `:###/.
-#    `-//:. :##:`:###/.
-#      `-//:+######/.
-#        `-/+####/.
-#          `+##+.
-#           :##:
-#           :##:
-#           :##:
-#           :##:
-#           :##:
-#            .+:
-
 import socket
 from threading import Thread
 import json
+from hex_server import ROOT_DIR
 
-import os
-
-
-class BluetoothServer(Thread):
+class TCPServer(Thread):
     ERROR = -1
     LISTEN = 1
     CONNECTED = 2
@@ -49,26 +18,19 @@ class BluetoothServer(Thread):
 
         self.cmd_queue = out_cmd_queue
 
-        with open('/home/pi/hexapod/software/raspberry pi/config.json', 'r') as read_file:
+        with open(f'{ROOT_DIR}/config.json', 'r') as read_file:
             self.config = json.load(read_file)
 
-        stream = os.popen('hciconfig hci0')
-        output = stream.read()
-        device_id = "hci0"
-        bt_mac = output.split("{}:".format(device_id))[1].split(
-            "BD Address: ")[1].split(" ")[0].strip()
-
-        self.mac = bt_mac
-        self.port = 10
-        self.bt_socket = socket.socket(
-            socket.AF_BLUETOOTH, socket.SOCK_STREAM, socket.BTPROTO_RFCOMM)
+        self.host = socket.gethostname()
+        self.port = 9001
+        self.tcp_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
         self.signal = self.SIG_NORMAL
 
     def run(self):
         try:
-            self.bt_socket.bind((self.mac, self.port))
-            self.bt_socket.listen(1)
+            self.tcp_socket.bind((self.ip, self.port))
+            self.tcp_socket.listen(1)
             print('TCP listening')
         except OSError as err:
             # print('emit tcp server error')
@@ -81,7 +43,7 @@ class BluetoothServer(Thread):
                 # print('wait for a connection')
                 # self.status.emit(self.LISTEN, '')
                 try:
-                    self.connection, addr = self.bt_socket.accept()
+                    self.connection, addr = self.tcp_socket.accept()
                     # self.connection.setblocking(False)
                     # self.connection.settimeout(1)
                     print('New connection')
@@ -98,12 +60,11 @@ class BluetoothServer(Thread):
                             break
                         else:
                             if data:
-                                print(data.decode())
                                 self.cmd_queue.put(data.decode())
                             else:
                                 break
 
         finally:
-            self.bt_socket.close()
+            self.tcp_socket.close()
             self.cmd_queue.put('standby:')
             print('exit')

@@ -20,8 +20,9 @@ class TCPServer(Thread):
 
         with open(f'{ROOT_DIR}/config.json', 'r') as read_file:
             self.config = json.load(read_file)
-
-        self.host = socket.gethostname()
+        
+        self.host = socket.getfqdn()
+        self.ip = '0.0.0.0'
         self.port = 9001
         self.tcp_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -31,7 +32,7 @@ class TCPServer(Thread):
         try:
             self.tcp_socket.bind((self.ip, self.port))
             self.tcp_socket.listen(1)
-            print('TCP listening')
+            print(f'TCP listening {self.ip}')
         except OSError as err:
             # print('emit tcp server error')
             # self.status.emit(self.STOP, '')

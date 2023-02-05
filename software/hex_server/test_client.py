@@ -1,7 +1,7 @@
 import socket
 
 
-HOST = "localhost"  # The remote host
+HOST = "0.0.0.0"  # The remote host
 PORT = 9001  # The same port as used by the server
 IS_RECONNECT_ENABLED = False
 

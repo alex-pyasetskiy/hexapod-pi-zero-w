@@ -1,5 +1,8 @@
 from audioop import reverse
-from adafruit_servokit import ServoKit
+from servo import Servos
+
+from board import SCL, SDA
+import busio
 # import BlynkLib
 
 from leg import Leg
@@ -27,6 +30,8 @@ import os
 ROOT_DIR = os.path.abspath(os.path.dirname(__file__))
 
 # blynk = BlynkLib.Blynk('vwk3O5oev9k6nUlhSu_kZdEWrpsGqipN', server='192.168.31.220', port=8442, log=print)
+i2c = busio.I2C(SCL, SDA)
+
 
 class Hexapod(Thread):
     CMD_STANDBY = 'standby'
@@ -92,58 +97,22 @@ class Hexapod(Thread):
         self.mount_position[:, 1] = self.mount_y
 
         # Objects
-        self.pca_left = ServoKit(channels=16, address=0x41, frequency=50)
-        self.pca_right = ServoKit(channels=16, address=0x40, frequency=50)
+        self.pca_left = Servos(i2c=i2c, address=0x41, freq=50)
+        self.pca_right = Servos(i2c=i2c, address=0x40, freq=50)
 
         self.legs = [
             # front right
-            Leg(0, [
-                self.pca_right.servo[13], 
-                self.pca_right.servo[14],
-                self.pca_right.servo[15]
-            ],
-                # correction=self.config.get('leg0Offset', [0, 0, 0])
-                ),
+            Leg(0, [13, 14, 15], self.pca_right),
             # center right
-            Leg(1, [
-                self.pca_right.servo[9],
-                self.pca_right.servo[10],
-                self.pca_right.servo[11]
-            ],
-                # correction=self.config.get('leg1Offset', [0, 0, 0])
-                ),
+            Leg(1, [9, 10, 11], self.pca_right),
             # rear right
-            Leg(2, [
-                self.pca_right.servo[0], 
-                self.pca_right.servo[1],
-                self.pca_right.servo[2]
-            ],
-                # correction=self.config.get('leg2Offset', [0, 10, 0])
-                ),
+            Leg(2, [0, 1, 2], self.pca_right),
             # rear left
-            Leg(3, [
-                self.pca_left.servo[13], 
-                self.pca_left.servo[14],
-                self.pca_left.servo[15]
-            ],
-                # correction=self.config.get('leg3Offset', [0, 0, 10])
-                ),
+            Leg(3, [13, 14, 15], self.pca_left),
             # center left
-            Leg(4, [
-                self.pca_left.servo[9], 
-                self.pca_left.servo[10],
-                self.pca_left.servo[11]
-            ],
-                # correction=self.config.get('leg4Offset', [0, 0, 0])
-                ),
+            Leg(4, [9, 10, 11], self.pca_left),
             # front left
-            Leg(5, [
-                self.pca_left.servo[0], 
-                self.pca_left.servo[1],
-                self.pca_left.servo[2]
-            ],
-                # correction=self.config.get('leg5Offset', [0, 0, 0])
-                )
+            Leg(5, [0,1,2], self.pca_left)
         ]
 
         # self.leg_0.reset(True)
@@ -202,7 +171,7 @@ class Hexapod(Thread):
 
     def posture(self, coordinate):
         angles = self.inverse_kinematics(coordinate)
-        #print(f"posture angles={angles}")
+        # print(f"posture angles={angles}")
 
         self.legs[0].move_junctions(angles[0, :])
         self.legs[5].move_junctions(angles[5, :])
@@ -307,7 +276,8 @@ class Hexapod(Thread):
             if self.calibration_mode:
                 self.calibration_cmd_handler(data)
             else:
-                self.current_motion = self.cmd_dict.get(data, self.standby_posture)
+                self.current_motion = self.cmd_dict.get(
+                    data, self.standby_posture)
                 # print(self.current_motion)
         self.cmd_queue.task_done()
 
@@ -366,6 +336,7 @@ class Hexapod(Thread):
 #     print("Updating values from the server...")
 #     blynk.sync_virtual(0,1,2)
 
+
 def main():
     q = Queue()
     tcp_server = TCPServer(q)
@@ -378,9 +349,6 @@ def main():
     hexapod.start()
     # q.put('walk0:')
 
-    
-
-
 
 if __name__ == '__main__':
-        main()
+    main()

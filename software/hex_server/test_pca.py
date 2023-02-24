@@ -13,7 +13,7 @@ pca_left = PCA9685(i2c_bus, address=0x41)
 pca_right.frequency = 50
 pca_left.frequency = 50
 
-
+# 1 == 36
 min_cycles = 1500 # 0
 max_cycles = 8000 # 180
 mid_cycles = 3250 # 90

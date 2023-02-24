@@ -1,43 +1,25 @@
-import asyncio
+import socket
 
 
-async def handle_connection(reader, writer):
-    addr = writer.get_extra_info("peername")
-    print("Connected by", addr)
-    while True:
-        # Receive
-        try:
-            data = await reader.read(1024)  # New
-        except ConnectionError:
-            print(f"Client suddenly closed while receiving from {addr}")
-            break
-        print(f"Received {data} from: {addr}")
-        if not data:
-            break
-        # Process
-        if data == b"close":
-            break
-        data = data.upper()
-        # Send
-        print(f"Send: {data} to: {addr}")
-        try:
-            writer.write(data)  # New
-            await writer.drain()
-        except ConnectionError:
-            print(f"Client suddenly closed, cannot send")
-            break
-    writer.close()
-    print("Disconnected by", addr)
+def client_program():
+    host = socket.gethostname()  # as both code is running on same pc
+    port = 5000  # socket server port number
+
+    client_socket = socket.socket()  # instantiate
+    client_socket.connect(('0.0.0.0', 9001))  # connect to the server
+
+    message = input(" -> ")  # take input
+
+    while message.lower().strip() != 'bye':
+        client_socket.send(message.encode())  # send message
+        data = client_socket.recv(1024).decode()  # receive response
+
+        print('Received from server: ' + data)  # show in terminal
+
+        message = input(" -> ")  # again take input
+
+    # client_socket.close()  # close the connection
 
 
-async def main(host, port):
-    server = await asyncio.start_server(handle_connection, host, port)
-    print(f"Start server...")
-    async with server:
-        await server.serve_forever()
-
-HOST = ""  # Symbolic name meaning all available interfaces
-PORT = 9001  # Arbitrary non-privileged port
-
-if __name__ == "__main__":
-    asyncio.run(main(HOST, PORT))
+if __name__ == '__main__':
+    client_program()

@@ -8,20 +8,20 @@
         "front_left"
     ],
     "legMountX": [
-        70,
-        30,
-        70,
-        -30,
-        -70,
-        -30
+        110,
+        120,
+        110,
+        -110,
+        -120,
+        -110
     ],
     "legMountY": [
-        55.41,
+        220,
         0,
-        -55.41,
-        -55.41,
+        -220,
+        -220,
         0,
-        55.41
+        220
     ],
     "legMountAngle": [
         45,
@@ -31,70 +31,10 @@
         -180,
         -225
     ],
-    "legRootToJoint1": 30,
-    "legJoint1ToJoint2": 30,
+    "legRootToJoint1": 35,
+    "legJoint1ToJoint2": 80,
     "legJoint2ToJoint3": 85,
-    "legJoint3ToTip": 90,
+    "legJoint3ToTip": 100,
     "movementInterval": 5,
-    "movementSwitchDuration": 150,
-    "leg0Offset": [
-        10.0,
-        -10.0,
-        -4.0
-    ],
-    "leg0Scale": [
-        1,
-        1,
-        1
-    ],
-    "leg1Offset": [
-        -8.0,
-        0.0,
-        -4.0
-    ],
-    "leg1Scale": [
-        1,
-        1,
-        1
-    ],
-    "leg2Offset": [
-        8.0,
-        0.0,
-        -12.0
-    ],
-    "leg2Scale": [
-        1,
-        1,
-        1
-    ],
-    "leg3Offset": [
-        -8.0,
-        4.0,
-        -4.0
-    ],
-    "leg3Scale": [
-        1,
-        1,
-        1
-    ],
-    "leg4Offset": [
-        -12.0,
-        0.0,
-        4.0
-    ],
-    "leg4Scale": [
-        1,
-        1,
-        1
-    ],
-    "leg5Offset": [
-        -16.0,
-        -4.0,
-        4.0
-    ],
-    "leg5Scale": [
-        1,
-        1,
-        1
-    ]
+    "movementSwitchDuration": 150
 }

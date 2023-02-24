@@ -1,7 +1,10 @@
 import socket
 from threading import Thread
 import json
-from hex_server import ROOT_DIR
+import os
+import sys
+
+ROOT_DIR = os.path.abspath(os.path.dirname(__file__))
 
 class TCPServer(Thread):
     ERROR = -1
@@ -31,41 +34,27 @@ class TCPServer(Thread):
     def run(self):
         try:
             self.tcp_socket.bind((self.ip, self.port))
-            self.tcp_socket.listen(1)
-            print(f'TCP listening {self.ip}')
-        except OSError as err:
-            # print('emit tcp server error')
-            # self.status.emit(self.STOP, '')
-            pass
-        else:
-            while True:
-                self.cmd_queue.put('standby:')
-                # Wait for a connection
-                # print('wait for a connection')
-                # self.status.emit(self.LISTEN, '')
-                try:
-                    self.connection, addr = self.tcp_socket.accept()
-                    # self.connection.setblocking(False)
-                    # self.connection.settimeout(1)
-                    print('New connection')
-                except socket.timeout as t_out:
-                    pass
-                else:
-                    while True:
-                        # print('waiting for data')
-                        # if self.signal == self.SIG_NORMAL:
-                        try:
-                            data = self.connection.recv(4096)
-                        except socket.error as e:
-                            print(e)
-                            break
-                        else:
-                            if data:
-                                self.cmd_queue.put(data.decode())
-                            else:
-                                break
+        except socket.error as msg:
+            print(f'# Bind failed. {msg} ')
+            sys.exit()
 
-        finally:
-            self.tcp_socket.close()
-            self.cmd_queue.put('standby:')
-            print('exit')
+        print('# Socket bind complete')
+
+        # Start listening on socket
+        self.tcp_socket.listen(10)
+        print('# Socket now listening')
+
+        # Wait for client
+        conn, addr = self.tcp_socket.accept()
+        print('# Connected to ' + addr[0] + ':' + str(addr[1]))
+
+        # Receive data from client
+        while True:     
+            data = conn.recv(1024)
+            line = data.decode('UTF-8')    # convert to string (Python 3 only)
+            line = line.replace("\n","")   # remove newline character
+            print( line )     
+
+            if line:
+
+                self.cmd_queue.put(line)

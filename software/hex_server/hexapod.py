@@ -1,5 +1,6 @@
 from audioop import reverse
 from adafruit_servokit import ServoKit
+# import BlynkLib
 
 from leg import Leg
 
@@ -20,9 +21,12 @@ from path_generator import gen_twist_path
 from threading import Thread
 
 from tcpserver import TCPServer
-from btserver import BluetoothServer
-from hex_server import ROOT_DIR
+# from btserver import BluetoothServer
+import os
 
+ROOT_DIR = os.path.abspath(os.path.dirname(__file__))
+
+# blynk = BlynkLib.Blynk('vwk3O5oev9k6nUlhSu_kZdEWrpsGqipN', server='192.168.31.220', port=8442, log=print)
 
 class Hexapod(Thread):
     CMD_STANDBY = 'standby'
@@ -61,7 +65,7 @@ class Hexapod(Thread):
         Thread.__init__(self)
 
         self.cmd_queue = in_cmd_queue
-        self.interval = 0.005
+        self.interval = 0.2
 
         self.calibration_mode = False
 
@@ -98,42 +102,48 @@ class Hexapod(Thread):
                 self.pca_right.servo[14],
                 self.pca_right.servo[15]
             ],
-                correction=self.config.get('leg0Offset', [0, 0, 0])),
+                # correction=self.config.get('leg0Offset', [0, 0, 0])
+                ),
             # center right
             Leg(1, [
-                self.pca_right.servo[8],
                 self.pca_right.servo[9],
-                self.pca_right.servo[10]
+                self.pca_right.servo[10],
+                self.pca_right.servo[11]
             ],
-                correction=self.config.get('leg1Offset', [0, 0, 0])),
+                # correction=self.config.get('leg1Offset', [0, 0, 0])
+                ),
             # rear right
             Leg(2, [
-                self.pca_right.servo[5], 
-                self.pca_right.servo[6],
-                self.pca_right.servo[7]
+                self.pca_right.servo[0], 
+                self.pca_right.servo[1],
+                self.pca_right.servo[2]
             ],
-                correction=self.config.get('leg2Offset', [0, 10, 0])),
+                # correction=self.config.get('leg2Offset', [0, 10, 0])
+                ),
             # rear left
             Leg(3, [
                 self.pca_left.servo[13], 
                 self.pca_left.servo[14],
                 self.pca_left.servo[15]
             ],
-                correction=self.config.get('leg3Offset', [0, 0, 10])),
+                # correction=self.config.get('leg3Offset', [0, 0, 10])
+                ),
             # center left
             Leg(4, [
-                self.pca_left.servo[8], 
-                self.pca_left.servo[9],
-                self.pca_left.servo[10]
+                self.pca_left.servo[9], 
+                self.pca_left.servo[10],
+                self.pca_left.servo[11]
             ],
-                correction=self.config.get('leg4Offset', [0, 0, 0])),
+                # correction=self.config.get('leg4Offset', [0, 0, 0])
+                ),
             # front left
             Leg(5, [
-                self.pca_left.servo[4], 
-                self.pca_left.servo[5],
-                self.pca_left.servo[6]
+                self.pca_left.servo[0], 
+                self.pca_left.servo[1],
+                self.pca_left.servo[2]
             ],
-                correction=self.config.get('leg5Offset', [0, 0, 0]))
+                # correction=self.config.get('leg5Offset', [0, 0, 0])
+                )
         ]
 
         # self.leg_0.reset(True)
@@ -143,55 +153,36 @@ class Hexapod(Thread):
         # self.leg_4.reset(True)
         # self.leg_5.reset(True)
 
-        self.standby_posture = self.gen_posture(60, 75)
+        self.standby_posture = self.gen_posture(90, 90)
 
         self.current_motion = self.standby_posture
 
         self.cmd_dict = {
-            self.CMD_STANDBY:
-            self.standby_posture,
-            self.CMD_LAYDOWN:
-            self.gen_posture(0, 15),
-            self.CMD_WALK_0:
-            gen_walk_path(self.standby_posture['coord'], direction=0),
-            self.CMD_WALK_180:
-            gen_walk_path(self.standby_posture['coord'], direction=180),
-            self.CMD_WALK_R45:
-            gen_walk_path(self.standby_posture['coord'], direction=315),
-            self.CMD_WALK_R90:
-            gen_walk_path(self.standby_posture['coord'], direction=270),
-            self.CMD_WALK_R135:
-            gen_walk_path(self.standby_posture['coord'], direction=225),
-            self.CMD_WALK_L45:
-            gen_walk_path(self.standby_posture['coord'], direction=45),
-            self.CMD_WALK_L90:
-            gen_walk_path(self.standby_posture['coord'], direction=90),
-            self.CMD_WALK_L135:
-            gen_walk_path(self.standby_posture['coord'], direction=135),
-            self.CMD_FASTFORWARD:
-            gen_fastwalk_path(self.standby_posture['coord']),
-            self.CMD_FASTBACKWARD:
-            gen_fastwalk_path(self.standby_posture['coord'], reverse=True),
-            self.CMD_TURNLEFT:
-            gen_turn_path(self.standby_posture['coord'], direction='left'),
-            self.CMD_TURNRIGHT:
-            gen_turn_path(self.standby_posture['coord'], direction='right'),
-            self.CMD_CLIMBFORWARD:
-            gen_climb_path(self.standby_posture['coord'], reverse=False),
-            self.CMD_CLIMBBACKWARD:
-            gen_climb_path(self.standby_posture['coord'], reverse=True),
-            self.CMD_ROTATEX:
-            gen_rotatex_path(self.standby_posture['coord']),
-            self.CMD_ROTATEY:
-            gen_rotatey_path(self.standby_posture['coord']),
-            self.CMD_ROTATEZ:
-            gen_rotatez_path(self.standby_posture['coord']),
-            self.CMD_TWIST:
-            gen_twist_path(self.standby_posture['coord'])
+            self.CMD_STANDBY: self.standby_posture,
+            self.CMD_LAYDOWN: self.gen_posture(0, 15),
+            self.CMD_WALK_0: gen_walk_path(self.standby_posture['coord'], direction=0),
+            self.CMD_WALK_180: gen_walk_path(self.standby_posture['coord'], direction=180),
+            self.CMD_WALK_R45: gen_walk_path(self.standby_posture['coord'], direction=315),
+            self.CMD_WALK_R90: gen_walk_path(self.standby_posture['coord'], direction=270),
+            self.CMD_WALK_R135: gen_walk_path(self.standby_posture['coord'], direction=225),
+            self.CMD_WALK_L45: gen_walk_path(self.standby_posture['coord'], direction=45),
+            self.CMD_WALK_L90: gen_walk_path(self.standby_posture['coord'], direction=90),
+            self.CMD_WALK_L135: gen_walk_path(self.standby_posture['coord'], direction=135),
+            self.CMD_FASTFORWARD: gen_fastwalk_path(self.standby_posture['coord']),
+            self.CMD_FASTBACKWARD: gen_fastwalk_path(self.standby_posture['coord'], reverse=True),
+            self.CMD_TURNLEFT: gen_turn_path(self.standby_posture['coord'], direction='left'),
+            self.CMD_TURNRIGHT: gen_turn_path(self.standby_posture['coord'], direction='right'),
+            self.CMD_CLIMBFORWARD: gen_climb_path(self.standby_posture['coord'], reverse=False),
+            self.CMD_CLIMBBACKWARD: gen_climb_path(self.standby_posture['coord'], reverse=True),
+            self.CMD_ROTATEX: gen_rotatex_path(self.standby_posture['coord']),
+            self.CMD_ROTATEY: gen_rotatey_path(self.standby_posture['coord']),
+            self.CMD_ROTATEZ: gen_rotatez_path(self.standby_posture['coord']),
+            self.CMD_TWIST: gen_twist_path(self.standby_posture['coord'])
         }
 
         self.posture(self.standby_posture['coord'])
         time.sleep(1)
+        # print(self.cmd_dict)
 
     def gen_posture(self, j2_angle, j3_angle):
         j2_rad = j2_angle / 180 * np.pi
@@ -211,6 +202,7 @@ class Hexapod(Thread):
 
     def posture(self, coordinate):
         angles = self.inverse_kinematics(coordinate)
+        #print(f"posture angles={angles}")
 
         self.legs[0].move_junctions(angles[0, :])
         self.legs[5].move_junctions(angles[5, :])
@@ -225,7 +217,7 @@ class Hexapod(Thread):
         for p_idx in range(0, np.shape(path)[0]):
             dest = path[p_idx, :, :]
             angles = self.inverse_kinematics(dest)
-
+            print(f"move p_idx={p_idx} angles={angles}")
             self.legs[0].move_junctions(angles[0, :])
             self.legs[5].move_junctions(angles[5, :])
 
@@ -235,12 +227,14 @@ class Hexapod(Thread):
             self.legs[2].move_junctions(angles[2, :])
             self.legs[3].move_junctions(angles[3, :])
 
-            # time.sleep(self.interval)
+            time.sleep(self.interval)
 
     def motion(self, path):
         for p_idx in range(0, np.shape(path)[0]):
             dest = path[p_idx, :, :]
             angles = self.inverse_kinematics(dest)
+
+            # print(f"motion p_idx={p_idx} angles={angles}")
 
             self.legs[0].move_junctions(angles[0, :])
             self.legs[5].move_junctions(angles[5, :])
@@ -253,9 +247,9 @@ class Hexapod(Thread):
 
             try:
                 cmd_string = self.cmd_queue.get(block=False)
-                print('interrput')
+                print(cmd_string)
             except Empty:
-                # time.sleep(self.interval)
+                time.sleep(self.interval)
                 pass
             else:
                 self.cmd_handler(cmd_string)
@@ -296,9 +290,9 @@ class Hexapod(Thread):
         return angles
 
     def cmd_handler(self, cmd_string):
-        print(cmd_string)
-        data = cmd_string.split(':')[-2]
-
+        # print(cmd_string)
+        # data = cmd_string.split(':')[-2]
+        data = cmd_string
         if data == self.CMD_CALIBRATION:
             self.calibration_mode = True
             self.legs[0].reset(calibrated=True)
@@ -313,9 +307,8 @@ class Hexapod(Thread):
             if self.calibration_mode:
                 self.calibration_cmd_handler(data)
             else:
-                self.current_motion = self.cmd_dict.get(
-                    data, self.standby_posture)
-
+                self.current_motion = self.cmd_dict.get(data, self.standby_posture)
+                # print(self.current_motion)
         self.cmd_queue.task_done()
 
     def calibration_cmd_handler(self, cmd_string):
@@ -357,18 +350,21 @@ class Hexapod(Thread):
             # if self.current_motion is None:
             try:
                 cmd_string = self.cmd_queue.get(block=False)
+                if cmd_string:
+                    self.cmd_handler(cmd_string)
             except Empty:
-                # time.sleep(self.interval)
-                pass
-            else:
-                self.cmd_handler(cmd_string)
+                time.sleep(self.interval)
 
-            if not self.calibration_mode:
-                if self.current_motion['type'] == 'motion':
-                    self.motion(self.current_motion['coord'])
-                elif self.current_motion['type'] == 'posture':
-                    self.posture(self.current_motion['coord'])
+# @blynk.ON("V*")
+# def blynk_handle_vpins(pin, value):
+#     print("V{} value: {}".format(pin, value))
 
+# @blynk.ON("connected")
+# def blynk_connected():
+#     # You can also use blynk.sync_virtual(pin)
+#     # to sync a specific virtual pin
+#     print("Updating values from the server...")
+#     blynk.sync_virtual(0,1,2)
 
 def main():
     q = Queue()
@@ -382,5 +378,9 @@ def main():
     hexapod.start()
     # q.put('walk0:')
 
+    
+
+
+
 if __name__ == '__main__':
-    main()
+        main()
